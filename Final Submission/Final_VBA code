@@ -1,0 +1,126 @@
+Sub VBA_challenge()
+    
+    'Printing summary table
+    Cells(1, 9).Value = "Ticker Symbol"
+    Cells(1, 10).Value = "Yearly Change"
+    Cells(1, 11).Value = "Percentage Change"
+    Cells(1, 12).Value = "Total Stock Volume"
+    Cells(2, 14).Value = "Greatest % increase"
+    Cells(3, 14).Value = "Greatest % decrease"
+    Cells(4, 14).Value = "Greatest Total Volume"
+    Cells(1, 15).Value = "Ticker"
+    Cells(1, 16).Value = "Value"
+    
+    'Identifying last row
+    LastRow = Cells(Rows.Count, "A").End(xlUp).Row
+
+    'Indentifying values for the summary table
+    Dim i As Long
+
+    Dim ticker_num As Long
+    num = 2
+
+    Dim opening_price As Double
+    opening_price = Cells(2, 3).Value
+
+    Dim closing_price As Double
+    Dim yearly_change As Double
+    Dim percentage_change As Double
+    Dim total_vol As LongLong
+
+    For i = 2 To LastRow
+
+        If Cells(i + 1, 1).Value <> Cells(i, 1).Value And Cells(i + 1, 2).Value < Cells(i, 2).Value Then
+
+            'Ticker symbol
+            ticker_symbol = Cells(i, 1).Value
+            Cells(num, 9) = ticker_symbol
+
+            'Closing price and Yearly change
+            closing_price = Cells(i, 6).Value
+            yearly_change = closing_price - opening_price
+            Cells(num, 10) = yearly_change
+
+            If yearly_change < 0 Then
+                Cells(num, 10).Interior.ColorIndex = 3
+            Else
+                Cells(num, 10).Interior.ColorIndex = 4
+            End If
+
+            'Percent change
+            If opening_price > yearly_changee Then
+                percentage_change = (yearly_change / opening_price)
+                Cells(num, 11).Value = FormatPercent(percentage_change)
+            Else
+                percentage_change = 0
+                Cells(num, 11).Value = FormatPercent(percentage_change)
+            End If
+
+            'Printing total stock volume
+            total_vol = total_vol + Cells(i, 7).Value
+            Cells(num, 12).Value = total_vol
+
+            total_vol = 0
+
+            num = num + 1
+
+            'Opening price and Yearly change
+            opening_price = Cells(i + 1, 3).Value
+
+
+        Else
+            'Adding stock volume
+            total_vol = total_vol + Cells(i, 7).Value
+        End If
+    Next i
+    
+    LastRowResults = Cells(Rows.Count, "I").End(xlUp).Row
+    For i = 2 To LastRowResults
+            If i = 2 Then
+                percent_compare1 = Cells(i, 11).Value
+                Cells(2, 15).Value = Cells(i, 9).Value
+                Cells(2, 16).Value = Cells(i, 11).Value
+            'Greatest % increase
+            ElseIf i > 2 And Cells(i, 11).Value > percent_compare1 Then
+                percent_compare1 = Cells(i, 11).Value
+                Cells(2, 16).Value = FormatPercent(Cells(i, 11).Value)
+                Cells(2, 15).Value = Cells(i, 9).Value
+            End If
+            
+             If i = 2 Then
+                percent_compare2 = Cells(i, 11).Value
+                Cells(3, 15).Value = Cells(i, 9).Value
+                Cells(3, 16).Value = Cells(i, 11).Value
+            'Greatest % decrease
+            ElseIf i > 2 And Cells(i, 11).Value < percent_compare2 Then
+                percent_compare2 = Cells(i, 11).Value
+                Cells(3, 16).Value = FormatPercent(Cells(i, 11).Value)
+                Cells(3, 15).Value = Cells(i, 9).Value
+            End If
+            
+             If i = 2 Then
+                Cells(4, 16).Value = Cells(i, 12).Value
+                Cells(4, 15).Value = Cells(i, 9).Value
+            'Greatest total stock volume
+            ElseIf i > 2 And Cells(i, 12).Value > Cells(4, 16).Value Then
+                Cells(4, 16).Value = Cells(i, 12).Value
+                Cells(4, 15).Value = Cells(i, 9).Value
+            End If
+    Next i
+    
+End Sub
+
+Sub clear_all()
+
+LastRowResults = Cells(Rows.Count, "I").End(xlUp).Row
+    For i = 1 To LastRowResults
+        For j = 9 To 16
+            Cells(i, j).Value = " "
+            Cells(i, j).Interior.ColorIndex = 0
+        Next j
+    Next i
+    
+End Sub
+
+
+
